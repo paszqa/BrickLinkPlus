@@ -1,0 +1,19 @@
+/* content_script.css */
+
+/* Hide the increment and decrement arrows in Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+
+/* Hide the increment and decrement arrows */
+.addToCartQty::-webkit-inner-spin-button,
+.addToCartQty::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0; /* Optional: Adjust as needed */
+}
+
+.notification-inline--success {
+    display: none;
+}
