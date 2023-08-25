@@ -7,4 +7,4 @@ Firefox addon for desktop - Bricklink.com store UI improvements
 
 # After image
 
-![After](screens/before1.png "With the plugin")
+![After](screens/after1.png "With the plugin")
