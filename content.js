@@ -225,16 +225,25 @@ function modifyArticle(article) {
         if(pWithSecondCurrency){
           console.log("LAAA2: "+div.querySelector('p').textContent);
           secondCurrency = getCurrencyAndValue(div.querySelector('p').textContent);
+          console.log("Second currency: "+secondCurrency);
+          console.log("Second currency [0]: "+secondCurrency[0]);
+          console.log("Second currency [1]: "+secondCurrency[1]);
+          console.log("Main currency [0]: "+mainCurrency[0]);
+          console.log("Main currency [1]: "+mainCurrency[1]);
           div.innerHTML = mainCurrency[1]+" "+mainCurrency[0]+"<br>"+secondCurrency[1]+" "+secondCurrency[0];
           div.style.lineHeight = '23px';
         }
         else{
+          console.log("Else checkpoint #1");
           div.innerHTML = mainCurrency[1]+" "+mainCurrency[0]+"";
           div.style.lineHeight = '45px';
+          console.log("Else checkpoint #2");
         }
+        console.log("Standard checkpoint #1");
         div.style.borderRadius = '9px';
         div.style.height = '50px';
         div.style.background = 'none';
+        console.log("Standard checkpoint #2");
         /*
         div.textContent = div.textContent.replace('Price: ', '');
         div.textContent = div.textContent.replace('(', '\n');
@@ -247,34 +256,53 @@ function modifyArticle(article) {
       }
       else{//If it doesnt contain "PRICE" (then it's add to cart):
         //div.style.background = 'none';
-        div.style.borderRadius = '9px';
-        div.style.background = 'none';
-        div.style.padding = 0;
-        div.style.height = '47px';
-        div.style.textAlign = 'center';
+          console.log("PRICE checkpoint #1");
+        console.log("PRICE checkpoint #2");
         const labels = div.querySelectorAll('.add-label');
+        console.log("PRICE checkpoint #3");
         labels.forEach(label => {
-            if (label.textContent === 'Add to Cart') {
-                console.log("A3");
-                label.remove();
-            }
-          });
+          if (label.textContent === 'Add to Cart') {
+            console.log("A3");
+            label.remove();
+          }
+        });
+        console.log("PRICE checkpoint #4");
+        console.log("PRICE INNERHTML: "+div.innerHTML);
         const inputThing = div.querySelector('.addToCartQty');
-        console.log(inputThing.innerHTML);
-        inputThing.style.width = '50px';
-        inputThing.style.height = addToCartHeight;
-        inputThing.style.webkitAppearance = "none";
-        inputThing.style.mozAppearance = "none";
-        inputThing.style.margin = '0';
-        inputThing.style.padding = '0';
-        customizeButtons(buyContainer, value);
+        console.log("PRICE checkpoint #5");
+        if(inputThing){ //If standard purchase thing (Not super lot)
+          console.log(inputThing.innerHTML);
+          console.log("PRICE checkpoint #6");
+          inputThing.style.width = '50px';
+          inputThing.style.height = addToCartHeight;
+          inputThing.style.webkitAppearance = "none";
+          inputThing.style.mozAppearance = "none";
+          inputThing.style.margin = '0';
+          inputThing.style.padding = '0';
+          customizeButtons(buyContainer, value);
+        }
         //Move ADD TO CART one level up
-        const parentParentElement = div.parentElement.parentElement;
-        parentParentElement.appendChild(div);
-        div.style.width = '95%';
-        div.style.margin = 'auto';
-        div.style.textAlign = 'center';
-        div.style.display = 'inline-block';
+        console.log("PRICE checkpoint #7");
+        console.log("The parent is = "+div.parentElement.className);
+        var numberOfChildren = div.parentElement.querySelectorAll("div").length;
+        console.log("NUMBER OF CHILDREN: "+div.parentElement.querySelectorAll("div").length);
+        if(numberOfChildren == 2){
+          div.style.borderRadius = '9px';
+          div.style.background = 'none';
+          div.style.padding = 0;
+          div.style.height = '47px';
+          div.style.textAlign = 'center';
+          const parentParentElement = div.parentElement.parentElement;
+          console.log("PRICE checkpoint #8");
+          parentParentElement.appendChild(div);
+          console.log("The class name is = "+div.className);
+          console.log("NUMBER OF CHILDREN 2: "+div.parentElement.querySelectorAll("div").length);
+          console.log("PRICE checkpoint #9");
+          div.style.width = '95%';
+          div.style.margin = 'auto';
+          div.style.textAlign = 'center';
+          div.style.display = 'inline-block';
+        }
       }
     });
   });
@@ -309,8 +337,8 @@ function customizeButtons(whereToScan, availableNumber) {
       incrementButton.style.height = addToCartHeight;
       incrementButton.style.fontSize = '28px';
       incrementButton.style.fontWeight = '700';
-      incrementButton.style.margin = '700';
-      incrementButton.style.padding = '700';
+      incrementButton.style.margin = '0';
+      incrementButton.style.padding = '0';
       incrementButton.style.lineHeight = '15px';
       incrementButton.style.borderRadius = '0 10px 10px 0';
       incrementButton.style.border = 'none';
@@ -407,7 +435,9 @@ function getCurrencyAndValue(inputString){
     const secondWord = parseFloat(words[1]).toFixed(2);
     console.log("INPUT STRING SECOND: "+secondWord);
     if(!isNaN(secondWord)){ //if a number is parsed, limit it to 2 decimal
+      console.log("Number parsed....");
       words[1] = secondWord;
+      console.log("Number parsed #2... "+words[1]);
     }
   }
   return words;
@@ -470,6 +500,24 @@ const customCSS = `
       top: 75%;
       left: 110%;
     }
+    .bl-3 .bl-btn{
+      background: #008CBA;
+      color: black;
+      border-radius: 10px;
+      outline: none;
+      border: none;
+      height: `+addToCartHeight+`;
+      display: inline-block;
+      box-shadow: none;
+      line-height: 10px;
+    }
+    .bl-3 .bl-btn:hover{
+      background: #1ac6ff;
+      box-shadow: none;
+    }
+    .bl-3 .bl-btn:hover:not(:disabled){
+      box-shadow: none;
+    }
 `;
 
 // Function to inject the custom CSS
@@ -478,14 +526,71 @@ function injectCustomCSS() {
     styleElement.textContent = customCSS;
     document.head.appendChild(styleElement);
 }
+/*
+// Listen for messages from the background script
+browser.runtime.onMessage.addListener(function (message) {
+  if (message.action === "modifyPage") {
+    modifyPage();
+  }
+});
 
-  // Listen for messages from the background script
-  browser.runtime.onMessage.addListener(function (message) {
-    if (message.action === "modifyPage") {
-      modifyPage();
-    }
-  });
-  
-  // Trigger the modifications immediately upon injection
-  modifyPage();
+
+// Trigger the modifications immediately upon injection
+document.addEventListener('DOMContentLoaded', function() {
+  // Find the <article> element
+  const articleElement = document.getElementById('myArticle');
+
+  if (articleElement) {
+    modifyPage();
+    injectCustomCSS();
+  }
+});
+
+window.addEventListener('load', modifyPage);
+*/
+
+
+
+
+// Use MutationObserver to watch for changes in the DOM
+const observer = new MutationObserver(function(mutationsList, observer) {
+  for (const mutation of mutationsList) {
+      if (mutation.type === 'childList') {
+          // Call the modifyPage function when the dynamic content is added
+          modifyPage();
+          injectCustomCSS();
+          // Disconnect the observer since we don't need it anymore
+          observer.disconnect();
+          break;
+      }
+  }
+});
+
+// Start observing the target element for changes
+observer.observe(document.body, { childList: true, subtree: true });
+
+
+// Simulate the function that triggers content update
+function triggerContentUpdate(type, value) {
+  // Call the function that updates the content
+  // ... your existing content update logic here ...
+
+  // Call the modifyPage function to reapply modifications
+  setTimeout(modifyPage, 3000); // Adjust the delay as needed
   injectCustomCSS();
+}
+
+// Call the triggerContentUpdate function whenever content is updated
+// For example, when an interaction triggers the reload
+triggerContentUpdate('catID', { itemType: 'CUSTOM', catstr: 'example' });
+
+document.addEventListener('click', function() {
+  setTimeout(modifyPage, 500);
+  setTimeout(modifyPage, 1000);
+  setTimeout(modifyPage, 1300);
+  setTimeout(modifyPage, 1700);
+  setTimeout(modifyPage, 2000);
+  setTimeout(modifyPage, 2500);
+  setTimeout(modifyPage, 3000);
+  setTimeout(modifyPage, 3500);
+});
